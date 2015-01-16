@@ -41,6 +41,8 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             templateUrl: 'views/race_update.html',
             controller: 'RaceUpdateCtrl',
             // can also use 'resolve:' here, which allows you to add promises that must resolve successfully before the route will change.
+            // consider creating a controller that pulls back all data needed here and calling it, which will cut down on the code in resolve:
+            // - http://odetocode.com/blogs/scott/archive/2014/05/20/using-resolve-in-angularjs-routes.aspx
             // we're going to inject the race, the raceDirectors, and the raceDistances.
             resolve: {
                 race: ['$route', 'svc_Races', function($route, svc_Races) {

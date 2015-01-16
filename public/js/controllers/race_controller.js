@@ -152,7 +152,9 @@ angular.module('raceController', ['ui.bootstrap'])
                     , race, raceDirectors, raceDistances, testValue) {
             $scope.raceFormData = {};
             $scope.raceId = $routeParams.raceId;
-            $scope.loadingData = true;
+            $scope.validationErrors = [];
+
+            //$scope.loadingData = false;
 
             //console.log('testValue = ' + testValue);
             //console.log('race = ' + race.data);
@@ -167,6 +169,46 @@ angular.module('raceController', ['ui.bootstrap'])
             $scope.raceDirectors = raceDirectors.data;
             $scope.raceDistances = raceDistances.data;
 
+            // example of a single $watch
+            /*
+            $scope.$watch('race.raceDistance._id', function(newVal, oldVal) {
+                if(newVal) {
+                    // if there is some selected (other than the 'other' value), clear out other distance and units
+                    $scope.race.otherRaceDistanceAmount = '';
+                    $scope.race.otherRaceDistanceUnits = '';
+                    $scope.validationErrors = [];
+                }
+                else {
+                    $scope.validationErrors.push("Remember to add your non-standard distance");
+                }
+                $scope.showValidationErrors = $scope.validationErrors.length;
+
+            })
+            */
+
+            // probably need to use $validate here.  Must be a better way to keep a list if form validations
+            $scope.$watchGroup(['race.raceDistance._id', 'race.otherRaceDistanceAmount', 'race.otherRaceDistanceUnits']
+                , function (newValues, oldValues, scope) {
+                    if(newValues[0]) {
+                        // if there is some race distance selected (other than the 'other' value), clear out other distance and units
+                        $scope.race.otherRaceDistanceAmount = '';
+                        $scope.race.otherRaceDistanceUnits = '';
+                        $scope.validationErrors = [];
+                    }
+                    else {
+                        // they've selected 'Other' for race distance
+                        if (newValues[1] && newValues[2]) {
+                            // if both other distance and units have been entered
+                            $scope.validationErrors = [];
+                        }
+                        else {
+                            if ($scope.validationErrors.length == 0)
+                                // only add a validation if there are none currently (can't add more than one of the same)
+                                $scope.validationErrors.push("Remember to add your non-standard distance");
+                        }
+                    }
+                    $scope.showValidationErrors = $scope.validationErrors.length;
+            });
             // THEREFORE, WE'RE NOT CALLING INIT() ANYMORE
             //init();     // call our init() function to kick things off
 
@@ -229,7 +271,7 @@ angular.module('raceController', ['ui.bootstrap'])
                     // ** do whatever we want done here when all of the data loads successfully
                     //alert('all done');
                     //console.log('all done');
-                    $scope.loadingData = false;
+                    //$scope.loadingData = false;
                 });
             }
 
