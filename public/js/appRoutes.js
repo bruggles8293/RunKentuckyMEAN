@@ -53,6 +53,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
                     return svc_RaceDistances.get();
                 }],
                 testValue: function() {
+                    // this is just a test
                     return 'here is a value';
                 }
             }
