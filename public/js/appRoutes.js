@@ -40,7 +40,8 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
         .when('/races/:raceId/update', {
             templateUrl: 'views/race_update.html',
             controller: 'RaceUpdateCtrl',
-            // can also use 'resolve:' here, which allows you to add promises that must resolve successfully before the route will change
+            // can also use 'resolve:' here, which allows you to add promises that must resolve successfully before the route will change.
+            // we're going to inject the race, the raceDirectors, and the raceDistances.
             resolve: {
                 race: ['$route', 'svc_Races', function($route, svc_Races) {
                     //console.log('$route.current.params.raceId is ' + $route.current.params.raceId);
