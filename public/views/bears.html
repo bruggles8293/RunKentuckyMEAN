@@ -1,0 +1,42 @@
+<!-- HEADER AND BEAR COUNT -->
+<div class="jumbotron text-center">
+    <h1>I'm a Bear-aholic <span class="label label-info">{{ bears.length }}</span></h1>
+</div>
+
+<!-- BEAR LIST -->
+<div id="bear-list" class="row">
+    <div class="col-sm-4 col-sm-offset-4">
+        <!-- LOOP OVER THE BEARS IN $scope.bears -->
+        <div class="checkbox" ng-repeat="bear in bears">
+            <label>
+                <input type="checkbox" ng-click="deleteBear(bear._id)"> {{ bear.salutation + ' ' + bear.name }}
+            </label>
+        </div>
+
+        <br/>
+        Just a demo:
+        <ul>
+            <li ng-repeat="bearType in bearTypes">{{bearType}}</li>
+        </ul>
+        <p class="text-center" ng-show="loading">
+            <span class="fa fa-spinner fa-spin fa-3x"></span>
+        </p>
+    </div>
+</div>
+
+<!-- FORM TO CREATE BEARS -->
+<div id="bear-form" class="row">
+    <div class="col-sm-8 col-sm-offset-2 text-center">
+        <form>
+            <div class="form-group">
+
+                <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
+                <input type="text" class="form-control input-lg text-center" placeholder="Bears salutation" ng-model="formData.salutation">
+                <input type="text" class="form-control input-lg text-center" placeholder="Bears name" ng-model="formData.name">
+            </div>
+
+            <!-- createBear() WILL CREATE NEW BEARS -->
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="createBear()">Add</button>
+        </form>
+    </div>
+</div>

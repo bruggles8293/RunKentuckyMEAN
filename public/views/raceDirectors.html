@@ -1,0 +1,65 @@
+<div id="raceDirector-list" class="row">
+    <div class="col-sm-8 col-sm-offset-0">
+        <!-- LOOP OVER THE RaceDirectors IN $scope.raceDirectors -->
+        Race Directors:<br/>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <td>First Name</td>
+                <td>Last Name</td>
+                <td>Email</td>
+                <td>Website</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="raceDirector in raceDirectors">
+                <td>{{raceDirector.firstName}}</td>
+                <td>{{raceDirector.lastName}}</td>
+                <td>{{raceDirector.emailAddress}}</td>
+                <td>{{raceDirector.website}}</td>
+                <td><button ng-show="!editingRaceDirectors[$index]" ng-click="editRaceDirector($index)" class="btn btn-primary btn-sm">edit</button></td>
+            </tr>
+            </tbody>
+        </table>
+        <p class="text-center" ng-show="loading">
+            <span class="fa fa-spinner fa-spin fa-3x"></span>
+        </p>
+    </div>
+</div>
+<!-- FORM TO CREATE RACE DIRECTORS -->
+<div id="raceDirector-form" class="row">
+    <div ng-show="editingRaceDirectors.length == 0" class="col-sm-8 col-sm-offset-2 text-center">
+        <form>
+            <div class="form-group">
+
+                <!-- BIND THIS VALUE TO formData.text IN ANGULAR -->
+                <input type="text" class="form-control input-lg text-left" placeholder="First name" ng-model="raceDirectorFormData.firstName">
+                <input type="text" class="form-control input-lg text-left" placeholder="Last name" ng-model="raceDirectorFormData.lastName">
+                <input type="text" class="form-control input-lg text-left" placeholder="Email address" ng-model="raceDirectorFormData.emailAddress">
+                <input type="text" class="form-control input-lg text-left" placeholder="Website" ng-model="raceDirectorFormData.website">
+                <input type="text" class="form-control input-lg text-left" placeholder="Phone number" ng-model="raceDirectorFormData.phoneNumber">
+
+            </div>
+
+            <!-- createRaceDirector() WILL CREATE NEW RACEDIRECTORS -->
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="createRaceDirector()">Add New Race Director</button>
+        </form>
+    </div>
+    <div ng-show="editingRaceDirectors.length > 0" class="col-sm-8 col-sm-offset-2 text-center">
+        <form>
+            <div class="form-group">
+                <input type="text" class="form-control input-sm text-left" ng-model="editingRaceDirectors[editingRaceDirectorsIndex].firstName">
+                <input type="text" class="form-control input-sm text-left" ng-model="editingRaceDirectors[editingRaceDirectorsIndex].lastName">
+                <input type="text" class="form-control input-sm text-left" ng-model="editingRaceDirectors[editingRaceDirectorsIndex].emailAddress">
+                <input type="text" class="form-control input-sm text-left" ng-model="editingRaceDirectors[editingRaceDirectorsIndex].website">
+                <input type="text" class="form-control input-sm text-left" ng-model="editingRaceDirectors[editingRaceDirectorsIndex].phoneNumber">
+            </div>
+
+            <!-- updateRaceDirector() will update the selected race director -->
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="callUpdateRaceDirector()">Update Race Director</button>
+            <label>{{editingRaceDirectorsIndex}}</label>
+            <button ng-click="cancelEditRaceDirector($index)">Cancel</button>
+        </form>
+    </div>
+</div>
