@@ -57,6 +57,16 @@ angular.module('raceController', ['ui.bootstrap'])
 
         init();     // call our init() function to kick things off
 
+        //test function for our button
+        $scope.getRaces = function() {
+            svc_Races.get()
+                .success(function(data) {
+                    console.log('svc_Races.get called');
+                    $scope.races = data;
+                    $scope.loadingRaces = false;
+                    //console.log('data = ' + data);
+                });
+        }
         function init() {
             // TODO:  do these methods need to be declared separately (so we can call them outside of init())?
             // GET =====================================================================
@@ -237,6 +247,7 @@ angular.module('raceController', ['ui.bootstrap'])
                     alert("Error: " + err.data);
                     console.log(err.data);
                     // we'll set loadingData to false, but we need to do something else, because we can't update a Race if this happens
+                    // note that if I throw an error in routes.js, that will get bubbled up to here, and this promise won't resolve.
                     //$scope.loadingData = false;
                 });
 

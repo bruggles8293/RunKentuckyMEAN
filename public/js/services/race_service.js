@@ -1,6 +1,8 @@
 /**
  * Created by brian on 12/18/2014.
  */
+// remember that Services are Singletons that maintains its own state
+
 angular.module('raceService', [])
 
     // super simple service
@@ -10,7 +12,10 @@ angular.module('raceService', [])
         return {
             get : function() {
                 console.log('raceService.get');
-                return $http.get('/api/races');
+                return $http.get('/api/races', {
+                    cache: true
+                    , method: 'get'
+                });
             },
             getById : function(id) {
                 console.log('raceService.get');
