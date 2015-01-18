@@ -58,7 +58,7 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             resolve: {
                 race: ['$route', 'RaceService', function($route, RaceService) {
                     //console.log('$route.current.params.raceId is ' + $route.current.params.raceId);
-                    return RaceService.GetRaceById($route.current.params.raceId);
+                    return RaceService.GetRaceById($route.current.params.raceId, true);
                 }],
                 raceDirectors: ['svc_RaceDirectors', function(svc_RaceDirectors) {
                     return svc_RaceDirectors.get();

@@ -5,6 +5,7 @@
 
 angular.module('raceService', [])
 
+    // custom cache (versus using
     .factory("RacesCache", function ($cacheFactory) {
         return $cacheFactory("RacesCache");
     })
@@ -16,6 +17,7 @@ angular.module('raceService', [])
         var raceService = {
             Races: [],
             //TestValues: [],
+            GetTestEditingRace: getTestEditingRace,
             GetRaces: getRaces,
             GetRaceById: getRaceById,
             CreateRace: createRace,
@@ -25,6 +27,8 @@ angular.module('raceService', [])
             GetRaceDistanceUnits: getRaceDistanceUnits
         };
         return raceService;
+
+        var _testEditingRace;
 
         // implementation
         function getRaces() {
@@ -48,9 +52,50 @@ angular.module('raceService', [])
             return def.promise;
         }
 
-        function getRaceById (id) {
+        function getTestEditingRace() {
+            return _testEditingRace;
+        }
+        function getRaceById (id, editing) {
+            // need to return a promise from this method
+            var def = $q.defer();
             console.log('raceService.get');
-            return $http.get('/api/races/' + id);
+            console.log('editing = ' + editing);
+            // TESTING ONLY - if raceService.TestEditingRace is undefined, then set it to the current race
+            $http.get('/api/races/' + id)
+                .success(function(data) {
+                    console.log(_testEditingRace);
+                    if (_testEditingRace === undefined) {
+                        //console.log(racePromise);
+                        _testEditingRace = data;
+                        console.log('_testEditingRace is now ' + _testEditingRace);
+                        //def.resolve(_testEditingRace);
+                        //return _testEditingRace;
+                    }
+                    else {
+                        console.log('we are here');
+                        //return _testEditingRace;
+                    }
+                    console.log(_testEditingRace);
+                    def.resolve(_testEditingRace);
+            });
+            return def.promise;
+
+            /*
+            if (editing == true) {
+                console.log('editing is true');
+                var def = $q.defer();
+                def.resolve(_testEditingRace);
+                return def.promise;
+            }
+            else {
+                console.log('editing is false');
+                //var racePromise = $http.get('/api/races/' + id);
+                //racePromise.then(function(httpData) {
+                    return racePromise;
+                //});
+            }
+            //return $http.get('/api/races/' + id);
+            */
         }
 
         function createRace (raceData) {

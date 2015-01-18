@@ -199,7 +199,8 @@ angular.module('raceController', ['ui.bootstrap'])
             // as the view is loaded.  See link below for info.
             // http://www.dwmkerr.com/promises-in-angularjs-the-definitive-guide/#advancedpromisesrouting
             // ****************************************************************************************************
-            $scope.race = race.data;
+            console.log(race);
+            $scope.race = race;
             $scope.raceDirectors = raceDirectors.data;
             $scope.raceDistances = raceDistances.data;
 
