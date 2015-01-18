@@ -21,7 +21,18 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
         // races page that will use the RaceController
         .when('/races', {
             templateUrl: 'views/races.html',
-            controller: 'RaceViewCtrl'
+            controller: 'RaceViewCtrl',
+            resolve: {
+                races: ['$route', 'RaceService', function($route, RaceService) {
+                    return RaceService.GetRaces();
+                }],
+                raceDirectors: ['svc_RaceDirectors', function(svc_RaceDirectors) {
+                    return svc_RaceDirectors.get();
+                }],
+                raceDistances: ['svc_RaceDistances', function(svc_RaceDistances) {
+                    return svc_RaceDistances.get();
+                }]
+            }
         })
 
         // race page (viewing one race)
@@ -45,9 +56,9 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
             // - http://odetocode.com/blogs/scott/archive/2014/05/20/using-resolve-in-angularjs-routes.aspx
             // we're going to inject the race, the raceDirectors, and the raceDistances.
             resolve: {
-                race: ['$route', 'svc_Races', function($route, svc_Races) {
+                race: ['$route', 'RaceService', function($route, RaceService) {
                     //console.log('$route.current.params.raceId is ' + $route.current.params.raceId);
-                    return svc_Races.getById($route.current.params.raceId);
+                    return RaceService.GetRaceById($route.current.params.raceId);
                 }],
                 raceDirectors: ['svc_RaceDirectors', function(svc_RaceDirectors) {
                     return svc_RaceDirectors.get();

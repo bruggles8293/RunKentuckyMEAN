@@ -50,52 +50,76 @@ angular.module('raceController', ['ui.bootstrap'])
     })
 
     // inject the Race service factory into our controller
-    .controller('RaceViewCtrl', ['$scope','$http','svc_Races', 'svc_RaceDirectors', 'svc_RaceDistances'
-        , function($scope, $http, svc_Races, svc_RaceDirectors, svc_RaceDistances) {
-        $scope.loadingRaces = true;
-        //$scope.loadingRaceDirectors = true;       // might need this here
+    .controller('RaceViewCtrl', ['$scope','$http'
+        ,'RaceService', 'svc_RaceDirectors', 'svc_RaceDistances'
+        , 'races', 'raceDirectors', 'raceDistances'
+        , function($scope, $http
+            , RaceService, svc_RaceDirectors, svc_RaceDistances
+            , races, raceDirectors, raceDistances) {
+            $scope.loadingRaces = true;
+            //$scope.loadingRaceDirectors = true;       // might need this here
 
-        init();     // call our init() function to kick things off
+            // see this link to understand why we're creating a $scope reference to RaceService:
+            // http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/
+            $scope.raceService = RaceService;
 
-        //test function for our button
-        $scope.getRaces = function() {
-            svc_Races.get()
-                .success(function(data) {
-                    console.log('svc_Races.get called');
-                    $scope.races = data;
-                    $scope.loadingRaces = false;
-                    //console.log('data = ' + data);
-                });
-        }
-        function init() {
-            // TODO:  do these methods need to be declared separately (so we can call them outside of init())?
-            // GET =====================================================================
-            // when landing on the page, get all data
-            // use the services to get all the data
-            svc_Races.get()
-                .success(function(data) {
-                    console.log('svc_Races.get called');
-                    $scope.races = data;
-                    $scope.loadingRaces = false;
-                    //console.log('data = ' + data);
-                });
+            // we really don't need to inject the 'races' data into the routes since by calling the service in the router we
+            // populate RaceService.Races - except that ensures that our race data has been populated before the route fires
 
-            // need RaceDirectors for dropdown list when adding a race
-            svc_RaceDirectors.get()
-                .success(function(data) {
-                    console.log('svc_RaceDirectors.get called');
-                    $scope.raceDirectors = data;
-                    $scope.loadingRaceDirectors = false;
-                });
+            // assign the '' and '' being injected into the controller (from services via routing) to the $scope variables
+            // TODO:  we'll eventually structure those services like RaceService
+            console.log(raceDirectors);
+            $scope.raceDirectors = raceDirectors.data;
+            $scope.raceDistances = raceDistances.data;
 
-            // need RaceDistances for dropdown list when adding a race
-            svc_RaceDistances.get()
-                .success(function(data) {
-                    console.log('svc_RaceDistances.get called');
-                    $scope.raceDistances = data;
-                    $scope.loadingRaceDistances = false;
-                });
-        }
+            //init();     // call our init() function to kick things off
+
+            //test function for our button
+            $scope.getRaces = function() {
+                RaceService.GetRaces()
+                    .then(function(data) {
+                        console.log('RaceService.getRaces called (and deferred returned) by RaceViewCtrl');
+                        console.log('RaceService.testValues = ' + RaceService.TestValues);
+                        console.log('RaceService.races = ' + RaceService.Races);
+                        //console.log(RaceService.races);
+                        // I want to reference the property of the service, NOT the return value of the function,
+                        // because we want to maintain state in the service, not the controller
+                        $scope.races = RaceService.Races;
+                        // we can use '$scope.races = data.data' if needed, but we want to maintain state in the controller
+                        //$scope.races = data.data;
+                        $scope.loadingRaces = false;
+                        //console.log(data);      // note that the races (data) is also coming back from the promise.
+                    });
+            }
+            function init() {
+                // TODO:  do these methods need to be declared separately (so we can call them outside of init())?
+                // GET =====================================================================
+                // when landing on the page, get all data
+                // use the services to get all the data
+                RaceService.GetRaces()
+                    .then(function() {
+                        console.log('RaceService.GetRaces called');
+                        $scope.races = RaceService.Races;
+                        $scope.loadingRaces = false;
+                        //console.log('data = ' + data);
+                    });
+
+                // need RaceDirectors for dropdown list when adding a race
+                svc_RaceDirectors.get()
+                    .success(function(data) {
+                        console.log('svc_RaceDirectors.get called');
+                        $scope.raceDirectors = data;
+                        $scope.loadingRaceDirectors = false;
+                    });
+
+                // need RaceDistances for dropdown list when adding a race
+                svc_RaceDistances.get()
+                    .success(function(data) {
+                        console.log('svc_RaceDistances.get called');
+                        $scope.raceDistances = data;
+                        $scope.loadingRaceDistances = false;
+                    });
+            }
     }])
 
     // inject the Race service factory into our controller
@@ -155,10 +179,10 @@ angular.module('raceController', ['ui.bootstrap'])
 
     // inject the Race service factory into our controller
     .controller('RaceUpdateCtrl', ['$scope','$http', '$q', '$routeParams'
-                    , 'svc_Races', 'svc_RaceDirectors', 'svc_RaceDistances'
+                    , 'RaceService', 'svc_RaceDirectors', 'svc_RaceDistances'
                     , 'race', 'raceDirectors', 'raceDistances', 'testValue'
         , function($scope, $http, $q, $routeParams
-                    , svc_Races, svc_RaceDirectors, svc_RaceDistances
+                    , RaceService, svc_RaceDirectors, svc_RaceDistances
                     , race, raceDirectors, raceDistances, testValue) {
             $scope.raceFormData = {};
             $scope.raceId = $routeParams.raceId;
@@ -236,9 +260,9 @@ angular.module('raceController', ['ui.bootstrap'])
                 // ****************************************************************************************************
 
                 // get the details of the Race
-                var getByIdPromise = svc_Races.getById($scope.raceId);
+                var getByIdPromise = RaceService.GetById($scope.raceId);
                 getByIdPromise.then(function(httpData) {
-                    console.log('svc_Races.getById called');
+                    console.log('RaceService.GetById called');
                     $scope.race = httpData.data;
                     //console.log(httpData);
                     //$scope.loadingRace = false;
@@ -299,18 +323,29 @@ angular.module('raceController', ['ui.bootstrap'])
                 $scope.loadingRaces = true;
 
                 // call the create function from our service (returns a promise object)
-                svc_Races.update(id, race)
+                RaceService.UpdateRace(id, race)
 
-                    // if successful creation, call our get function to get all the new races
+                    // if successful creation, clear cache
                     .success(function(data) {
                         $scope.loadingRaces = false;
+                        RaceService.ClearAllRaceCache();
                         //$scope.races[index] = data;
-                        svc_Races.getById(id)
+                        /*
+                        RaceService.GetRaceById(id)
                             .success(function(data) {
-                                console.log('svc_Races.getById called');
+                                console.log('RaceService.GetRaceById called');
                                 $scope.race = data;
                             });
-                    });
+                        */
+                    })
+                    .error(function() {
+                        // update failed, so reload the race
+                        RaceService.GetRaceById(id)
+                            .success(function(data) {
+                                console.log('RaceService.GetRaceById called');
+                                $scope.race = data;
+                            });
+                });
             };
 
             // DELETE ==================================================================
@@ -318,7 +353,7 @@ angular.module('raceController', ['ui.bootstrap'])
             $scope.deleteRace = function(id) {
                 $scope.loadingRaces = true;
                 console.log('deleteRace called');
-                svc_Races.delete(id)
+                RaceService.Delete(id)
                     // if successful creation, call our get function to get all the new races
                     .success(function(data) {
                         $scope.loadingRaces = false;

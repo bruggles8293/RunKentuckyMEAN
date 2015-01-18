@@ -32,7 +32,7 @@ function getRaceById(id, res){
 
 function getRaces(res){
 	// just a test here (*** I think my problem is how I'm populating the RaceDirector)
-
+	/*
 	var brianRd;
 	var brianRace;
 	// try doing a findOne on a raceDirector, then saving that raceDirector's ID to the race
@@ -64,6 +64,7 @@ function getRaces(res){
 
 			});
 	});
+	*/
 	// -------------------- test finished --------------------------
 
 	Race.find()
@@ -243,7 +244,7 @@ module.exports = function(app) {
 			}
 			console.log('Race.findByIdAndUpdate succeeded.')
 			console.log(race);
-			// get and return all the races after you create another
+
 			res.json(race);
 		});
 
