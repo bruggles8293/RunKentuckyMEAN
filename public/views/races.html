@@ -1,5 +1,6 @@
 <!-- need to next these bootstrap divs -->
 <div id="race-list" class="row">
+    <!--
      Race Directors (just a demo):
     <ul>
         <li ng-repeat="raceDirector in raceDirectors">{{raceDirector._id}} - {{raceDirector.fullName}}</li>
@@ -8,9 +9,59 @@
     <ul>
         <li ng-repeat="raceDistance in raceDistances">{{raceDistance._id}} - {{raceDistance.distanceName}}</li>
     </ul>
+    -->
     <div class="col-sm-8 col-sm-offset-0">
         <button ng-click="getRaces()">Get Races</button>
     </div>
+    <div class="col-sm-8 col-sm-offset-0">
+        <accordion close-others="false">
+            <accordion-group ng-repeat="race in raceService.Races">
+                <accordion-heading>
+                    <table>
+                        <tr ng-click="race.isExpanded = !race.isExpanded">
+                            <td><i class="glyphicon glyphicon-plus-sign" ng-class="race.isExpanded ? 'glyphicon glyphicon-minus-sign' : 'glyphicon glyphicon-plus-sign'"></i>&nbsp;</td>
+                            <td>{{race.name}}</td>
+                        </tr>
+                    </table>
+                </accordion-heading>
+                {{race.raceDirector.fullName}} - race.isExpanded = {{race.isExpanded}}
+            </accordion-group>
+        </accordion>
+    </div>
+    <div class="col-sm-8 col-sm-offset-0">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <td></td>
+                <td>Name</td>
+                <!-- <td>Date</td> -->
+                <td>Website</td>
+                <td>Race Director</td>
+                <td>Distance</td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody ng-repeat="race in raceService.Races">
+            <tr>
+                <td ng-click="race.isExpanded = !race.isExpanded">
+                    <span ng-class="race.isExpanded ? 'glyphicon glyphicon-minus-sign' : 'glyphicon glyphicon-plus-sign'"></span>
+                </td>
+                <td>{{race.name}}</td>
+                <td>{{race.website}}</td>
+                <td>{{race.raceDirector.fullName}}</td>
+                <td>{{race.raceDistance.distanceName}}</td>
+                <!-- <td><button ng-show="!editingRaces[$index]" ng-click="editRace($index)" class="btn btn-primary btn-sm">edit</button></td> -->
+                <td><a href="/races/{{race._id}}/update" class="btn btn-primary btn-sm">Edit</a></td>
+            </tr>
+            <!--<tr collapse="!race.isExpanded"> -->
+            <!-- this is much faster than using collapse, and accomplishes the same thing -->
+            <tr ng-show="race.isExpanded">
+                <td colspan="7">Here is some detail</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
     <div class="col-sm-8 col-sm-offset-0">
         <!-- LOOP OVER THE Races IN $scope.races -->
         Races:<br/>
@@ -91,6 +142,7 @@
                     <datepicker id="dpRaceDateInline" dt="raceFormData.raceDate" date-options="dateOptions" opened="opened"/>
                 </div>
 
+                <!-- maybe just use <input type="date" ng-model="raceFormData.raceDate" />  - see AngularJS docs for attributes -->
                 <!-- ** this is the best date picker option so far, but can't get the value to bind to raceFormData.raceDate ** -->
                 <label for="dpRaceDate" class="col-sm-3 control-label">Race Date</label>
                 <div class="col-sm-9">
