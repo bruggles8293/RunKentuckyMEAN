@@ -14,25 +14,9 @@
         <button ng-click="getRaces()">Get Races</button>
     </div>
     <div class="col-sm-8 col-sm-offset-0">
-        <accordion close-others="false">
-            <accordion-group ng-repeat="race in raceService.Races">
-                <accordion-heading>
-                    <table>
-                        <tr ng-click="race.isExpanded = !race.isExpanded">
-                            <td><i class="glyphicon glyphicon-plus-sign" ng-class="race.isExpanded ? 'glyphicon glyphicon-minus-sign' : 'glyphicon glyphicon-plus-sign'"></i>&nbsp;</td>
-                            <td>{{race.name}}</td>
-                        </tr>
-                    </table>
-                </accordion-heading>
-                {{race.raceDirector.fullName}} - race.isExpanded = {{race.isExpanded}}
-            </accordion-group>
-        </accordion>
-    </div>
-    <div class="col-sm-8 col-sm-offset-0">
-        <table class="table table-striped">
+        <table class="table table-striped table-bordered">
             <thead>
             <tr>
-                <td></td>
                 <td>Name</td>
                 <!-- <td>Date</td> -->
                 <td>Website</td>
@@ -43,10 +27,10 @@
             </thead>
             <tbody ng-repeat="race in raceService.Races">
             <tr>
-                <td ng-click="race.isExpanded = !race.isExpanded">
-                    <span ng-class="race.isExpanded ? 'glyphicon glyphicon-minus-sign' : 'glyphicon glyphicon-plus-sign'"></span>
+                <td>
+                    <span ng-click="race.isExpanded = !race.isExpanded" ng-class="race.isExpanded ? 'glyphicon glyphicon-minus-sign' : 'glyphicon glyphicon-plus-sign'"></span>
+                    {{race.name}}
                 </td>
-                <td>{{race.name}}</td>
                 <td>{{race.website}}</td>
                 <td>{{race.raceDirector.fullName}}</td>
                 <td>{{race.raceDistance.distanceName}}</td>
@@ -55,42 +39,12 @@
             </tr>
             <!--<tr collapse="!race.isExpanded"> -->
             <!-- this is much faster than using collapse, and accomplishes the same thing -->
+            <!-- I put an accordion demo in the previous version of this file, but can't use it for this -->
             <tr ng-show="race.isExpanded">
                 <td colspan="7">Here is some detail</td>
             </tr>
             </tbody>
         </table>
-    </div>
-
-    <div class="col-sm-8 col-sm-offset-0">
-        <!-- LOOP OVER THE Races IN $scope.races -->
-        Races:<br/>
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <td>Name</td>
-                    <!-- <td>Date</td> -->
-                    <td>Website</td>
-                    <td>Race Director</td>
-                    <td>Distance</td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="race in raceService.Races">
-                    <td>{{race.name}}</td>
-                    <!-- <td>{{race.dates[0]}}</td> -->
-                    <td>{{race.website}}</td>
-                    <td>{{race.raceDirector.fullName}}</td>
-                    <td>{{race.raceDistance.distanceName}}</td>
-                    <!-- <td><button ng-show="!editingRaces[$index]" ng-click="editRace($index)" class="btn btn-primary btn-sm">edit</button></td> -->
-                    <td><a href="/races/{{race._id}}/update" class="btn btn-primary btn-sm">Edit</a></td>
-                </tr>
-            </tbody>
-        </table>
-        <p class="text-center" ng-show="loading">
-            <span class="fa fa-spinner fa-spin fa-3x"></span>
-        </p>
     </div>
 </div>
 <!--
