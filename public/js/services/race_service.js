@@ -42,11 +42,11 @@ angular.module('raceService', [])
                 .success(function (data) {
                     raceService.Races = data;
                     raceService.TestValues = ['test3', 'test4'];    // this will work even if not declared above
-                    console.log(raceService.Races);
+                    //console.log(raceService.Races);
                     def.resolve(data);
                 })
                 .error(function (err) {
-                    console.log(err);
+                    console.log('err', err);
                     def.reject(err.message);
                 });
             return def.promise;
@@ -58,24 +58,24 @@ angular.module('raceService', [])
         function getRaceById (id, editing) {
             // need to return a promise from this method
             var def = $q.defer();
-            console.log('raceService.get');
-            console.log('editing = ' + editing);
+            console.log('raceService.getRaceById');
+            //console.log('editing = ' + editing);
             // TESTING ONLY - if raceService.TestEditingRace is undefined, then set it to the current race
             $http.get('/api/races/' + id)
                 .success(function(data) {
-                    console.log(_testEditingRace);
+                    //console.log('_testEditingRace', _testEditingRace);
                     if (_testEditingRace === undefined) {
                         //console.log(racePromise);
                         _testEditingRace = data;
-                        console.log('_testEditingRace is now ' + _testEditingRace);
+                        //console.log('_testEditingRace is now ' + _testEditingRace);
                         //def.resolve(_testEditingRace);
                         //return _testEditingRace;
                     }
-                    else {
-                        console.log('we are here');
-                        //return _testEditingRace;
-                    }
-                    console.log(_testEditingRace);
+                    //else {
+                    //    console.log('we are here');
+                    //    //return _testEditingRace;
+                    //}
+                    //console.log(_testEditingRace);
                     def.resolve(_testEditingRace);
             });
             return def.promise;
