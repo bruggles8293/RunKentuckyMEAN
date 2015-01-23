@@ -2,7 +2,98 @@
  * Created by brian on 12/19/2014.
  */
 // public/js/appRoutes.js
-angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
+angular.module('appRoutes', [])
+    .config(['$stateProvider', '$urlRouterProvider', '$locationProvider', function($stateProvider, $urlRouterProvider, $locationProvider) {
+        /*  $urlRouterProvider is here to establish a default route, and to listen for a window location change and redirect
+            to a route that has a state defined
+            i.e.
+        $urlRouterProvider.when('/legacy-route', {
+            redirectTo: '/'
+        });
+        */
+        $urlRouterProvider.otherwise('/');
+
+        // TODO: figure out what's going on here.  If I take this next line out, UI-Router puts # in the URL, and my 'home' (/) link
+        // doesn't work.  See this link - https://github.com/angular-ui/ui-router/wiki/Frequently-Asked-Questions#how-to-configure-your-server-to-work-with-html5mode
+        $locationProvider.html5Mode(true);
+
+        $stateProvider
+            .state('app', {
+                url: '/',
+                views: {
+                    'header': {
+                        templateUrl: 'views/header.html'
+                    },
+                    'content': {
+                        templateUrl: 'views/content.html'
+                    },
+                    'footer' : {
+                        templateUrl: 'views/footer.html'
+                    }
+                }
+            })
+            .state('app.races', {
+                url: 'races',
+                views: {
+                    'content@': {
+                        templateUrl: 'views/races.html',
+                        controller: 'RacesListCtrl',
+                        controllerAs: 'racesListCtrl'
+                    }
+                },
+                resolve: {
+                    races: ['RaceService', function(RaceService) {
+                        return RaceService.GetRaces();
+                    }],
+                    raceDirectors: ['svc_RaceDirectors', function(svc_RaceDirectors) {
+                        return svc_RaceDirectors.get();
+                    }],
+                    raceDistances: ['svc_RaceDistances', function(svc_RaceDistances) {
+                        return svc_RaceDistances.get();
+                    }]
+                }
+            })
+            // not sure what I'll do with race detail yet
+            .state('app.races.raceDetail', {
+                url: 'races/:id',
+                views: {
+                    'detail@app.races': {
+                        templateUrl: 'views/race.html',
+                        controller: 'RaceViewCtrl',
+                        controllerAs: 'raceViewCtrl'
+                    }
+                }
+            })
+            .state('app.races.raceUpdate', {
+                url: '/:raceId/update',
+                views: {
+                    'content@': {
+                        templateUrl: 'views/race_update.html',
+                        controller: 'RaceUpdateCtrl',
+                        controllerAs: 'raceUpdateCtrl'
+                    }
+                },
+                resolve: {
+                    race: ['$stateParams', 'RaceService', function($stateParams, RaceService) {
+                        //console.log('$route.current.params.raceId is ' + $route.current.params.raceId);
+                        return RaceService.GetRaceById($stateParams.raceId, true);
+                    }],
+                    raceDirectors: ['svc_RaceDirectors', function(svc_RaceDirectors) {
+                        return svc_RaceDirectors.get();
+                    }],
+                    raceDistances: ['svc_RaceDistances', function(svc_RaceDistances) {
+                        return svc_RaceDistances.get();
+                    }],
+                    testValue: function() {
+                        // this is just a test
+                        return 'here is a value';
+                    }
+                }
+            })
+    }]);
+
+    /*
+    .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider
         // home page
         .when('/', {
@@ -86,3 +177,4 @@ angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', f
         });
     $locationProvider.html5Mode(true);
 }]);
+        */
