@@ -50,32 +50,35 @@ angular.module('raceController', ['ui.bootstrap'])
     })
 
     // inject the Race service factory into our controller
-    .controller('RaceViewCtrl', ['$scope','$http'
-        ,'RaceService', 'svc_RaceDirectors', 'svc_RaceDistances'
+    .controller('RacesListCtrl', ['RaceService', 'svc_RaceDirectors', 'svc_RaceDistances'
         , 'races', 'raceDirectors', 'raceDistances'
-        , function($scope, $http
-            , RaceService, svc_RaceDirectors, svc_RaceDistances
+        , function(RaceService, svc_RaceDirectors, svc_RaceDistances
             , races, raceDirectors, raceDistances) {
-            $scope.loadingRaces = true;
+
+            // using controllerAs, so I use 'this' instead of '$scope'
+            // if I need to inject $scope (for $broadcast or watches, for example), I can
+            // maybe do a 'var vm = this;', then use vm throughout?
+            this.loadingRaces = true;
             //$scope.loadingRaceDirectors = true;       // might need this here
 
             // see this link to understand why we're creating a $scope reference to RaceService:
             // http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/
-            $scope.raceService = RaceService;
+            this.raceService = RaceService;
+            console.log('this.raceService.Races', this.raceService.Races);
 
             // we really don't need to inject the 'races' data into the routes since by calling the service in the router we
             // populate RaceService.Races - except that ensures that our race data has been populated before the route fires
 
             // assign the '' and '' being injected into the controller (from services via routing) to the $scope variables
             // TODO:  we'll eventually structure those services like RaceService
-            console.log(raceDirectors);
-            $scope.raceDirectors = raceDirectors.data;
-            $scope.raceDistances = raceDistances.data;
+            //console.log('raceDirectors', raceDirectors);
+            this.raceDirectors = raceDirectors.data;
+            this.raceDistances = raceDistances.data;
 
             //init();     // call our init() function to kick things off
 
             //test function for our button
-            $scope.getRaces = function() {
+            this.getRaces = function() {
                 RaceService.GetRaces()
                     .then(function(data) {
                         console.log('RaceService.getRaces called (and deferred returned) by RaceViewCtrl');
@@ -84,10 +87,10 @@ angular.module('raceController', ['ui.bootstrap'])
                         //console.log(RaceService.races);
                         // I want to reference the property of the service, NOT the return value of the function,
                         // because we want to maintain state in the service, not the controller
-                        $scope.races = RaceService.Races;
+                        this.races = RaceService.Races;
                         // we can use '$scope.races = data.data' if needed, but we want to maintain state in the controller
                         //$scope.races = data.data;
-                        $scope.loadingRaces = false;
+                        this.loadingRaces = false;
                         //console.log(data);      // note that the races (data) is also coming back from the promise.
                     });
             }
@@ -99,8 +102,8 @@ angular.module('raceController', ['ui.bootstrap'])
                 RaceService.GetRaces()
                     .then(function() {
                         console.log('RaceService.GetRaces called');
-                        $scope.races = RaceService.Races;
-                        $scope.loadingRaces = false;
+                        this.races = RaceService.Races;
+                        this.loadingRaces = false;
                         //console.log('data = ' + data);
                     });
 
@@ -108,16 +111,16 @@ angular.module('raceController', ['ui.bootstrap'])
                 svc_RaceDirectors.get()
                     .success(function(data) {
                         console.log('svc_RaceDirectors.get called');
-                        $scope.raceDirectors = data;
-                        $scope.loadingRaceDirectors = false;
+                        this.raceDirectors = data;
+                        this.loadingRaceDirectors = false;
                     });
 
                 // need RaceDistances for dropdown list when adding a race
                 svc_RaceDistances.get()
                     .success(function(data) {
                         console.log('svc_RaceDistances.get called');
-                        $scope.raceDistances = data;
-                        $scope.loadingRaceDistances = false;
+                        this.raceDistances = data;
+                        this.loadingRaceDistances = false;
                     });
             }
     }])
@@ -178,20 +181,24 @@ angular.module('raceController', ['ui.bootstrap'])
         }])
 
     // inject the Race service factory into our controller
-    .controller('RaceUpdateCtrl', ['$scope','$http', '$q', '$routeParams'
+    .controller('RaceUpdateCtrl', ['$scope', '$q', '$stateParams'
                     , 'RaceService', 'svc_RaceDirectors', 'svc_RaceDistances'
                     , 'race', 'raceDirectors', 'raceDistances', 'testValue'
-        , function($scope, $http, $q, $routeParams
+        , function($scope, $q, $stateParams
                     , RaceService, svc_RaceDirectors, svc_RaceDistances
                     , race, raceDirectors, raceDistances, testValue) {
-            $scope.raceFormData = {};
-            $scope.raceId = $routeParams.raceId;
-            $scope.validationErrors = [];
+
+            // I AM injecting $scope here, because I'm using it for a watch below.  Remove $scope if/when I get rid of the watch
+            this.raceFormData = {};
+            this.raceId = $stateParams.raceId;
+            this.validationErrors = [];
 
             //$scope.loadingData = false;
 
             //console.log('testValue = ' + testValue);
-            //console.log('race = ' + race.data);
+            console.log('race', race);
+            //console.log('raceDirectors', raceDirectors);
+            //console.log('raceDistances', raceDistances);
 
             // ****************************************************************************************************
             // we're using this (injecting data into the controller from the route) instead of calling the
@@ -199,10 +206,9 @@ angular.module('raceController', ['ui.bootstrap'])
             // as the view is loaded.  See link below for info.
             // http://www.dwmkerr.com/promises-in-angularjs-the-definitive-guide/#advancedpromisesrouting
             // ****************************************************************************************************
-            console.log(race);
-            $scope.race = race;
-            $scope.raceDirectors = raceDirectors.data;
-            $scope.raceDistances = raceDistances.data;
+            this.race = race;
+            this.raceDirectors = raceDirectors.data;
+            this.raceDistances = raceDistances.data;
 
             // example of a single $watch
             /*
@@ -222,27 +228,31 @@ angular.module('raceController', ['ui.bootstrap'])
             */
 
             // probably need to use $validate here.  Must be a better way to keep a list if form validations
-            $scope.$watchGroup(['race.raceDistance._id', 'race.otherRaceDistanceAmount', 'race.otherRaceDistanceUnits']
+            $scope.$watchGroup(['raceUpdateCtrl.race.raceDistance._id', 'raceUpdateCtrl.race.otherRaceDistanceAmount', 'raceUpdateCtrl.race.otherRaceDistanceUnits']
                 , function (newValues, oldValues, scope) {
+                    var ctrl = scope.raceUpdateCtrl;
+                    //console.log('newValues', newValues);
+                    //console.log('oldValues', oldValues);
                     if(newValues[0]) {
                         // if there is some race distance selected (other than the 'other' value), clear out other distance and units
-                        $scope.race.otherRaceDistanceAmount = '';
-                        $scope.race.otherRaceDistanceUnits = '';
-                        $scope.validationErrors = [];
+                        ctrl.race.otherRaceDistanceAmount = '';
+                        ctrl.race.otherRaceDistanceUnits = '';
+                        ctrl.validationErrors = [];
                     }
                     else {
                         // they've selected 'Other' for race distance
                         if (newValues[1] && newValues[2]) {
                             // if both other distance and units have been entered
-                            $scope.validationErrors = [];
+                            ctrl.validationErrors = [];
                         }
                         else {
-                            if ($scope.validationErrors.length == 0)
+                            if (ctrl.validationErrors.length == 0)
                                 // only add a validation if there are none currently (can't add more than one of the same)
-                                $scope.validationErrors.push("Remember to add your non-standard distance");
+                                ctrl.validationErrors.push("Remember to add your non-standard distance");
                         }
                     }
-                    $scope.showValidationErrors = $scope.validationErrors.length;
+                    ctrl.showValidationErrors = ctrl.validationErrors.length;
+                    console.log('ctrl.validationErrors', ctrl.validationErrors)
             });
             // THEREFORE, WE'RE NOT CALLING INIT() ANYMORE
             //init();     // call our init() function to kick things off
@@ -264,7 +274,7 @@ angular.module('raceController', ['ui.bootstrap'])
                 var getByIdPromise = RaceService.GetById($scope.raceId);
                 getByIdPromise.then(function(httpData) {
                     console.log('RaceService.GetById called');
-                    $scope.race = httpData.data;
+                    this.race = httpData.data;
                     //console.log(httpData);
                     //$scope.loadingRace = false;
 
@@ -281,8 +291,8 @@ angular.module('raceController', ['ui.bootstrap'])
                 raceDirectorsGetPromise.then(function(httpData) {
                     console.log('svc_RaceDirectors.get called');
                     //console.log(data);
-                    $scope.raceDirectors = httpData.data;
-                    $scope.loadingRaceDirectors = false;
+                    this.raceDirectors = httpData.data;
+                    this.loadingRaceDirectors = false;
                 }, function(err) {
                     alert("Error: " + err.data);
                     console.log(err.data);
@@ -294,8 +304,8 @@ angular.module('raceController', ['ui.bootstrap'])
                 var raceDistancesGetPromise = svc_RaceDistances.get();
                 raceDistancesGetPromise.then(function(httpData) {
                     console.log('svc_RaceDistances.get called');
-                    $scope.raceDistances = httpData.data;
-                    $scope.loadingRaceDistances = false;
+                    this.raceDistances = httpData.data;
+                    this.loadingRaceDistances = false;
                 }, function(err) {
                     alert("Error: " + err.data);
                     console.log(err.data);
@@ -312,8 +322,8 @@ angular.module('raceController', ['ui.bootstrap'])
             }
 
             // TODO:  *** Need to clean all of this stuff up and add error handling ***
-            $scope.callUpdateRace = function(){
-                updateRace($scope.raceId, $scope.race);
+            this.callUpdateRace = function(){
+                updateRace(this.raceId, this.race);
             };
 
             // UPDATE ==================================================================
@@ -321,14 +331,14 @@ angular.module('raceController', ['ui.bootstrap'])
                 console.log('updateRace called');
                 // validate the raceFormData to make sure that something is there
                 // if form is empty, nothing will happen
-                $scope.loadingRaces = true;
+                this.loadingRaces = true;
 
                 // call the create function from our service (returns a promise object)
                 RaceService.UpdateRace(id, race)
 
                     // if successful creation, clear cache
                     .success(function(data) {
-                        $scope.loadingRaces = false;
+                        this.loadingRaces = false;
                         RaceService.ClearAllRaceCache();
                         //$scope.races[index] = data;
                         /*
@@ -344,21 +354,21 @@ angular.module('raceController', ['ui.bootstrap'])
                         RaceService.GetRaceById(id)
                             .success(function(data) {
                                 console.log('RaceService.GetRaceById called');
-                                $scope.race = data;
+                                this.race = data;
                             });
                 });
             };
 
             // DELETE ==================================================================
             // delete a race after checking it
-            $scope.deleteRace = function(id) {
-                $scope.loadingRaces = true;
+            this.deleteRace = function(id) {
+                this.loadingRaces = true;
                 console.log('deleteRace called');
                 RaceService.Delete(id)
                     // if successful creation, call our get function to get all the new races
                     .success(function(data) {
-                        $scope.loadingRaces = false;
-                        $scope.races = data; // assign our new list of races
+                        this.loadingRaces = false;
+                        this.races = data; // assign our new list of races
                     });
             };
         }]);
