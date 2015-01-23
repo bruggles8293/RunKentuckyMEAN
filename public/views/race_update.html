@@ -10,19 +10,19 @@
                 <div class="form-group">
                     <label for="inputFirstName" class="col-sm-2 control-label">Name</label>
                     <div class="col-sm-9">
-                        <input type="text" id="inputFirstName_Edit" class="form-control input-md text-left" ng-model="race.name" ng-disabled="false">
+                        <input type="text" id="inputFirstName_Edit" class="form-control input-md text-left" ng-model="raceUpdateCtrl.race.name" ng-disabled="false">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputWebsite" class="col-sm-2 control-label">Website</label>
                     <div class="col-sm-6">
-                        <input type="text" id="inputWebsite_Edit" class="form-control input-md text-left" ng-model="race.website" ng-readonly="false">
+                        <input type="text" id="inputWebsite_Edit" class="form-control input-md text-left" ng-model="raceUpdateCtrl.race.website" ng-readonly="false">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="selRaceDirector" class="col-sm-2 control-label">Race Director</label>
+                    <label for="selRaceDirector" class="col-sm-2 control-label">Race Director</label>{{raceUpdateCtrl.race.raceDirector._id}}
                     <div class="col-sm-4">
-                        <select id="selRaceDirector_Edit" class="form-control" ng-model="race.raceDirector._id" ng-options="raceDirector._id as raceDirector.fullName for raceDirector in raceDirectors">
+                        <select id="selRaceDirector_Edit" class="form-control" ng-model="raceUpdateCtrl.race.raceDirector._id" ng-options="raceDirector._id as raceDirector.fullName for raceDirector in raceUpdateCtrl.raceDirectors">
                             <!-- <option value="" selected disabled>Race Director</option> -->
                         </select>
                     </div>
@@ -37,17 +37,17 @@
                 <div class="form-group">
                     <label for="selRaceDistances_Edit" class="col-sm-2 control-label">Distance</label>
                     <div class="col-sm-2">
-                        <select id="selRaceDistances_Edit" class="form-control" ng-model="race.raceDistance._id" ng-options="raceDistance._id as raceDistance.distanceName for raceDistance in raceDistances">
+                        <select id="selRaceDistances_Edit" class="form-control" ng-model="raceUpdateCtrl.race.raceDistance._id" ng-options="raceDistance._id as raceDistance.distanceName for raceDistance in raceUpdateCtrl.raceDistances">
                             <option value="">Other</option>
                         </select>
                     </div>
-                    <div ng-show="race.raceDistance._id == null">
+                    <div ng-show="raceUpdateCtrl.race.raceDistance._id == null">
                         <label class="col-sm-2 control-label">Other Distance</label>
                         <div class="col-sm-1">
-                            <input type="text" class="form-control input-md text-left" ng-model="race.otherRaceDistanceAmount" ng-disabled="race.raceDistance._id != null">
+                            <input type="text" class="form-control input-md text-left" ng-model="raceUpdateCtrl.race.otherRaceDistanceAmount" ng-disabled="raceUpdateCtrl.race.raceDistance._id != null">
                         </div>
                         <div class="col-sm-2">
-                            <select id="selOtherRaceDistances_Edit" class="form-control" ng-model="race.otherRaceDistanceUnits" ng-disabled="race.raceDistance._id != null">
+                            <select id="selOtherRaceDistances_Edit" class="form-control" ng-model="raceUpdateCtrl.race.otherRaceDistanceUnits" ng-disabled="raceUpdateCtrl.race.raceDistance._id != null">
                                 <option value="" selected></option>
                                 <option value="Miles" selected>Miles</option>
                                 <option value="Kilometers" selected>Kilometers</option>
@@ -58,18 +58,18 @@
                 <div class="form-group">
                     <div class="col-sm-12">
                         <!-- callUpdateRace() will update the selected race -->
-                        <button type="submit" class="btn btn-primary btn-lg" ng-click="callUpdateRace()">Update Race</button>
+                        <button type="submit" class="btn btn-primary btn-lg" ng-click="raceUpdateCtrl.callUpdateRace()">Update Race</button>
                         <a href="/races" class="btn btn-primary btn-lg">Cancel</a>
                     </div>
                 </div>
-                <p class="text-center" ng-show="loadingData">
+                <p class="text-center" ng-show="raceUpdateCtrl.loadingData">
                     <span class="fa fa-spinner fa-spin fa-3x"></span>
                 </p>
             </form>
         </div>
     </div>
 </div>
-<div class="panel panel-danger" ng-show="showValidationErrors">
+<div class="panel panel-danger" ng-show="raceUpdateCtrl.showValidationErrors">
     <div class="panel-heading">
         <h3 class="panel-title">Validation Errors</h3>
     </div>

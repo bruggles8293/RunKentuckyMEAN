@@ -11,9 +11,9 @@
     </ul>
     -->
     <div class="col-sm-8 col-sm-offset-0">
-        <button ng-click="getRaces()">Get Races</button>
+        <button ng-click="racesListCtrl.getRaces()">Get Races</button>
     </div>
-    <div class="col-sm-8 col-sm-offset-0">
+    <div class="col-sm-8 col-sm-offset-0 my-show-hide-animation"">
         <table class="table table-striped table-bordered">
             <thead>
             <tr>
@@ -25,7 +25,7 @@
                 <td></td>
             </tr>
             </thead>
-            <tbody ng-repeat="race in raceService.Races">
+            <tbody ng-repeat="race in racesListCtrl.raceService.Races">
             <tr>
                 <td>
                     <span ng-click="race.isExpanded = !race.isExpanded" ng-class="race.isExpanded ? 'glyphicon glyphicon-minus-sign' : 'glyphicon glyphicon-plus-sign'"></span>
@@ -35,168 +35,15 @@
                 <td>{{race.raceDirector.fullName}}</td>
                 <td>{{race.raceDistance.distanceName}}</td>
                 <!-- <td><button ng-show="!editingRaces[$index]" ng-click="editRace($index)" class="btn btn-primary btn-sm">edit</button></td> -->
-                <td><a href="/races/{{race._id}}/update" class="btn btn-primary btn-sm">Edit</a></td>
+                <td><a href="races/{{race._id}}/update" class="btn btn-primary btn-sm">Edit</a></td>
             </tr>
             <!--<tr collapse="!race.isExpanded"> -->
             <!-- this is much faster than using collapse, and accomplishes the same thing -->
             <!-- I put an accordion demo in the previous version of this file, but can't use it for this -->
             <tr ng-show="race.isExpanded">
-                <td colspan="7">Here is some detail</td>
+                <td colspan="7" class="red">Here is some detail</td>
             </tr>
             </tbody>
         </table>
-    </div>
-</div>
-<!--
-<div>
-    Last Edited Race (return results)
-    <table class="table table-striped table-bordered">
-        <thead>
-        <tr>
-            <td>Name</td>
-            <td>Website</td>
-            <td>Race Director</td>
-            <td>Distance</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>{{lastEditedRace.name}}</td>
-            <td>{{lastEditedRace.website}}</td>
-            <td>{{lastEditedRace.raceDirector.fullName}}</td>
-            <td>{{lastEditedRace.raceDistance.distanceName}}</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
--->
-<!-- FORM TO CREATE RACES -->
-<div id="race-form" class="row">
-    <div ng-show="editingRaces.length == 0" class="col-sm-8 col-sm-offset-0 text-center">
-        <form class="form-horizontal">
-            <div class="form-group">
-                <label for="inputFirstName" class="col-sm-3 control-label">Name</label>
-                <div class="col-sm-9">
-                    <input type="text" id="inputFirstName" class="form-control input-md text-left" ng-model="raceFormData.name" ng-disabled="false">
-                </div>
-                <label for="inputWebsite" class="col-sm-3 control-label">Website</label>
-                <div class="col-sm-9">
-                    <input type="text" id="inputWebsite" class="form-control input-md text-left" ng-model="raceFormData.website" ng-readonly="false">
-                </div>
-                <label for="selRaceDirector" class="col-sm-3 control-label">Race Director Name</label>
-                <div class="col-sm-9">
-                    <select id="selRaceDirector" class="form-control" ng-model="raceFormData.raceDirector" ng-options="raceDirector._id as raceDirector.fullName for raceDirector in raceDirectors">
-                        <!-- <option value="" selected disabled>Race Director</option> -->
-                    </select>
-                </div>
-
-                <!-- this one binds to raceFormData.raceDate for some reason while the next one doesn't -->
-                <label for="dpRaceDateInline" class="col-sm-3 control-label">Inline Date (standard control)</label>
-                <div class="col-sm-9">
-                    <datepicker id="dpRaceDateInline" dt="raceFormData.raceDate" date-options="dateOptions" opened="opened"/>
-                </div>
-
-                <!-- maybe just use <input type="date" ng-model="raceFormData.raceDate" />  - see AngularJS docs for attributes -->
-                <!-- ** this is the best date picker option so far, but can't get the value to bind to raceFormData.raceDate ** -->
-                <label for="dpRaceDate" class="col-sm-3 control-label">Race Date</label>
-                <div class="col-sm-9">
-                    <mydatepicker id="dpRaceDate" dt="raceFormData.raceDate" date-options="dateOptions" opened="opened"/>
-                </div>
-                <label>{{raceFormData.raceDate}}</label>
-                <!--
-                <label class="col-sm-3 control-label">Race Date:</label>
-                <div class="col-sm-9">
-                    <div class="input-group">
-                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-                          <span class="input-group-btn">
-                            <button class="btn btn-default" tooltip="Open date picker" ng-click="openDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                          </span>
-                    </div>
-                </div>
-                -->
-                <label for="selRaceDistances" class="col-sm-3 control-label">Distance</label>
-                <div class="col-sm-3">
-                    <select id="selRaceDistances" class="form-control" ng-model="raceFormData.raceDistance" ng-options="raceDistance._id as raceDistance.distanceName for raceDistance in raceDistances">
-                        <!-- <option value="" selected disabled>Race Director</option> -->
-                    </select>
-                </div>
-                <label class="col-sm-3 control-label">Other Distance</label>
-                <div class="col-sm-2">
-                    <input type="text" class="form-control input-md text-left" ng-model="raceFormData.otherRaceDistanceAmount">
-                </div>
-                <div class="col-sm-2">
-                    <select id="selOtherRaceDistances" class="form-control" ng-model="raceFormData.otherRaceDistanceUnits">
-                        <option value="" selected></option>
-                        <option value="Miles" selected>Miles</option>
-                        <option value="Kilometers" selected>Kilometers</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- createRace() WILL CREATE NEW RACES -->
-            <button type="submit" class="btn btn-primary btn-lg" ng-click="createRace()">Add New Race</button>
-        </form>
-    </div>
-    <!-- Edit race form -->
-    <!-- TODO:  need to be able to add race dates to a race.  First race date might be part of the 'create' form above -->
-    <div ng-show="editingRaces.length > 0" class="col-sm-8 col-sm-offset-2 text-center">
-        <form class="form-horizontal">
-            <div class="form-group">
-                <label for="inputFirstName" class="col-sm-3 control-label">Name</label>
-                <div class="col-sm-9">
-                    <input type="text" id="inputFirstName_Edit" class="form-control input-md text-left" ng-model="editingRaces[editingRacesIndex].name" ng-disabled="false">
-                </div>
-                <label for="inputWebsite" class="col-sm-3 control-label">Website</label>
-                <div class="col-sm-9">
-                    <input type="text" id="inputWebsite_Edit" class="form-control input-md text-left" ng-model="editingRaces[editingRacesIndex].website" ng-readonly="false">
-                </div>
-                <label for="selRaceDirector" class="col-sm-3 control-label">Race Director Name</label>
-                <div class="col-sm-9">
-                    <select id="selRaceDirector_Edit" class="form-control" ng-model="editingRaces[editingRacesIndex].raceDirector._id" ng-options="raceDirector._id as raceDirector.fullName for raceDirector in raceDirectors">
-                        <!-- <option value="" selected disabled>Race Director</option> -->
-                    </select>
-                </div>
-                <!--
-                <label for="dpRaceDate_Edit" class="col-sm-3 control-label">Race Date</label>
-                <div class="col-sm-9">
-                    <mydatepicker id="dpRaceDate_Edit" ng-model="editingRaces[editingRacesIndex].dates[0]" date-options="dateOptions" opened="opened"/>
-                </div>
-                -->
-                <label for="selRaceDistances_Edit" class="col-sm-3 control-label">Distance</label>
-                <div class="col-sm-3">
-                    <select id="selRaceDistances_Edit" class="form-control" ng-model="editingRaces[editingRacesIndex].raceDistance._id" ng-options="raceDistance._id as raceDistance.distanceName for raceDistance in raceDistances">
-                        <!-- <option value="" selected disabled>Race Director</option> -->
-                    </select>
-                </div>
-                <label class="col-sm-3 control-label">Other Distance</label>
-                <div class="col-sm-2">
-                    <input type="text" class="form-control input-md text-left" ng-model="editingRaces[editingRacesIndex].otherRaceDistanceAmount">
-                </div>
-                <div class="col-sm-2">
-                    <select id="selOtherRaceDistances_Edit" class="form-control" ng-model="editingRaces[editingRacesIndex].otherRaceDistanceUnits">
-                        <option value="" selected></option>
-                        <option value="Miles" selected>Miles</option>
-                        <option value="Kilometers" selected>Kilometers</option>
-                    </select>
-                </div>
-                <div class="col-sm-5">
-                    <!-- callUpdateRace() will update the selected race -->
-                    <button type="submit" class="btn btn-primary btn-lg" ng-click="callUpdateRace()">Update Race</button>
-                    <label>{{editingRacesIndex}}</label>
-                    <button ng-click="cancelEditRace($index)">Cancel</button>
-                </div>
-            </div>
-        </form>
-        <form>
-            <div class="form-group">
-                <input type="text" class="form-control input-sm text-left" ng-model="editingRaces[editingRacesIndex].name">
-                <input type="text" class="form-control input-sm text-left" ng-model="editingRaces[editingRacesIndex].website">
-            </div>
-
-            <!-- callUpdateRace() will update the selected race -->
-            <button type="submit" class="btn btn-primary btn-lg" ng-click="callUpdateRace()">Update Race</button>
-            <label>{{editingRacesIndex}}</label>
-            <button ng-click="cancelEditRace($index)">Cancel</button>
-        </form>
     </div>
 </div>
