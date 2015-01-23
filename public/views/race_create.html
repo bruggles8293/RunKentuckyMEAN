@@ -1,0 +1,68 @@
+<!-- FORM TO CREATE RACES (just moved this over from the original races.html - probably needs some work) -->
+<div id="race-form" class="row">
+    <div ng-show="editingRaces.length == 0" class="col-sm-8 col-sm-offset-0 text-center">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="inputFirstName" class="col-sm-3 control-label">Name</label>
+                <div class="col-sm-9">
+                    <input type="text" id="inputFirstName" class="form-control input-md text-left" ng-model="raceFormData.name" ng-disabled="false">
+                </div>
+                <label for="inputWebsite" class="col-sm-3 control-label">Website</label>
+                <div class="col-sm-9">
+                    <input type="text" id="inputWebsite" class="form-control input-md text-left" ng-model="raceFormData.website" ng-readonly="false">
+                </div>
+                <label for="selRaceDirector" class="col-sm-3 control-label">Race Director Name</label>
+                <div class="col-sm-9">
+                    <select id="selRaceDirector" class="form-control" ng-model="raceFormData.raceDirector" ng-options="raceDirector._id as raceDirector.fullName for raceDirector in raceDirectors">
+                        <!-- <option value="" selected disabled>Race Director</option> -->
+                    </select>
+                </div>
+
+                <!-- this one binds to raceFormData.raceDate for some reason while the next one doesn't -->
+                <label for="dpRaceDateInline" class="col-sm-3 control-label">Inline Date (standard control)</label>
+                <div class="col-sm-9">
+                    <datepicker id="dpRaceDateInline" dt="raceFormData.raceDate" date-options="dateOptions" opened="opened"/>
+                </div>
+
+                <!-- maybe just use <input type="date" ng-model="raceFormData.raceDate" />  - see AngularJS docs for attributes -->
+                <!-- ** this is the best date picker option so far, but can't get the value to bind to raceFormData.raceDate ** -->
+                <label for="dpRaceDate" class="col-sm-3 control-label">Race Date</label>
+                <div class="col-sm-9">
+                    <mydatepicker id="dpRaceDate" dt="raceFormData.raceDate" date-options="dateOptions" opened="opened"/>
+                </div>
+                <label>{{raceFormData.raceDate}}</label>
+                <!--
+                <label class="col-sm-3 control-label">Race Date:</label>
+                <div class="col-sm-9">
+                    <div class="input-group">
+                        <input type="text" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" tooltip="Open date picker" ng-click="openDatePicker($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                          </span>
+                    </div>
+                </div>
+                -->
+                <label for="selRaceDistances" class="col-sm-3 control-label">Distance</label>
+                <div class="col-sm-3">
+                    <select id="selRaceDistances" class="form-control" ng-model="raceFormData.raceDistance" ng-options="raceDistance._id as raceDistance.distanceName for raceDistance in raceDistances">
+                        <!-- <option value="" selected disabled>Race Director</option> -->
+                    </select>
+                </div>
+                <label class="col-sm-3 control-label">Other Distance</label>
+                <div class="col-sm-2">
+                    <input type="text" class="form-control input-md text-left" ng-model="raceFormData.otherRaceDistanceAmount">
+                </div>
+                <div class="col-sm-2">
+                    <select id="selOtherRaceDistances" class="form-control" ng-model="raceFormData.otherRaceDistanceUnits">
+                        <option value="" selected></option>
+                        <option value="Miles" selected>Miles</option>
+                        <option value="Kilometers" selected>Kilometers</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- createRace() WILL CREATE NEW RACES -->
+            <button type="submit" class="btn btn-primary btn-lg" ng-click="createRace()">Add New Race</button>
+        </form>
+    </div>
+</div>

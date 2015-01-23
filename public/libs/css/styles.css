@@ -1,0 +1,13 @@
+.my-fade-animation.ng-enter, .my-fade-animation.ng-move{
+    -webkit-animation: fadeIn 1s;
+    -moz-animation: fadeIn 1s;
+    -o-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+}
+
+.my-fade-animation.ng-leave{
+    -webkit-animation: fadeOut 1s;
+    -moz-animation: fadeOut 1s;
+    -o-animation: fadeOut 1s;
+    animation: fadeOut 1s;
+}
