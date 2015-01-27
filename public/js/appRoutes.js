@@ -55,7 +55,7 @@ angular.module('appRoutes', [])
             })
             // not sure what I'll do with race detail yet
             .state('app.races.raceDetail', {
-                url: 'races/:id',
+                url: 'races/:raceId',
                 views: {
                     'detail@app.races': {
                         templateUrl: 'views/race.html',
@@ -75,7 +75,7 @@ angular.module('appRoutes', [])
                 },
                 resolve: {
                     race: ['$stateParams', 'RaceService', function($stateParams, RaceService) {
-                        //console.log('$route.current.params.raceId is ' + $route.current.params.raceId);
+                        //console.log('$stateParams.raceId is ' + $stateParams.raceId);
                         return RaceService.GetRaceById($stateParams.raceId, true);
                     }],
                     raceDirectors: ['svc_RaceDirectors', function(svc_RaceDirectors) {
