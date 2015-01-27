@@ -5,30 +5,35 @@
 
 angular.module('raceService', [])
 
-    // custom cache (versus using
+    // custom cache (versus using $cacheFactory.get('$http'))
     .factory("RacesCache", function ($cacheFactory) {
         return $cacheFactory("RacesCache");
     })
 
+    .factory("UpdatingRaceCache", function ($cacheFactory) {
+        return $cacheFactory("UpdatingRaceCache");
+    })
+
     // each function returns a promise object
     //  - because $http functions return promises.  Looks like you don't need $q.defer here
-    .factory('RaceService', ['$http', '$q', 'RacesCache', function ($http, $q, RacesCache) {
+    .factory('RaceService', ['$http', '$q', 'RacesCache', 'UpdatingRaceCache', function ($http, $q, RacesCache, UpdatingRaceCache) {
         // interface
         var raceService = {
             Races: [],
             //TestValues: [],
-            GetTestEditingRace: getTestEditingRace,
+            //GetTestEditingRace: getTestEditingRace,
             GetRaces: getRaces,
             GetRaceById: getRaceById,
             CreateRace: createRace,
             UpdateRace: updateRace,
             DeleteRace: deleteRace,
-            ClearAllRaceCache: clearAllRaceCache,
+            ClearRacesCache: clearRacesCache,
+            ClearUpdatingRace: clearUpdatingRace,
             GetRaceDistanceUnits: getRaceDistanceUnits
         };
         return raceService;
 
-        var _testEditingRace;
+        var _currentlyUpdatingRace;
 
         // implementation
         function getRaces() {
@@ -52,9 +57,6 @@ angular.module('raceService', [])
             return def.promise;
         }
 
-        function getTestEditingRace() {
-            return _testEditingRace;
-        }
         function getRaceById (id, editing) {
             // need to return a promise from this method
             var def = $q.defer();
@@ -64,9 +66,9 @@ angular.module('raceService', [])
             $http.get('/api/races/' + id)
                 .success(function(data) {
                     //console.log('_testEditingRace', _testEditingRace);
-                    if (_testEditingRace === undefined) {
+                    if (_currentlyUpdatingRace === undefined) {
                         //console.log(racePromise);
-                        _testEditingRace = data;
+                        _currentlyUpdatingRace = data;
                         //console.log('_testEditingRace is now ' + _testEditingRace);
                         //def.resolve(_testEditingRace);
                         //return _testEditingRace;
@@ -76,7 +78,9 @@ angular.module('raceService', [])
                     //    //return _testEditingRace;
                     //}
                     //console.log(_testEditingRace);
-                    def.resolve(_testEditingRace);
+
+                    // TODO: not sure _currentlyUpdatingRace is what we want to return here, but it may be OK as long as I clear it when necessary
+                    def.resolve(_currentlyUpdatingRace);
             });
             return def.promise;
 
@@ -120,9 +124,14 @@ angular.module('raceService', [])
             return $http.delete('/api/races/' + id);
         }
 
-        function clearAllRaceCache () {
+        function clearRacesCache () {
             RacesCache.removeAll();
             //RacesCache.remove('/api/races/');   // TODO: why doesn't this work?
+        }
+
+        function clearUpdatingRace () {
+            console.log('clearUpdatingRaceCache called');
+            _currentlyUpdatingRace = undefined;
         }
 
         function getRaceDistanceUnits () {
