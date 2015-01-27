@@ -51,9 +51,9 @@ angular.module('raceController', ['ui.bootstrap'])
 
     // inject the Race service factory into our controller
     .controller('RacesListCtrl', ['RaceService', 'svc_RaceDirectors', 'svc_RaceDistances'
-        , 'races', 'raceDirectors', 'raceDistances'
+        , 'races', 'raceDirectors', 'raceDistances', '$state'
         , function(RaceService, svc_RaceDirectors, svc_RaceDistances
-            , races, raceDirectors, raceDistances) {
+            , races, raceDirectors, raceDistances, $state) {
 
             // using controllerAs, so I use 'this' instead of '$scope'
             // if I need to inject $scope (for $broadcast or watches, for example), I can
@@ -76,6 +76,12 @@ angular.module('raceController', ['ui.bootstrap'])
             this.raceDistances = raceDistances.data;
 
             //init();     // call our init() function to kick things off
+
+            this.updateRace = function(raceId) {
+                console.log('raceId', raceId);
+                RaceService.ClearUpdatingRace();
+                $state.go('app.races.raceUpdate', {"raceId": raceId});
+            };
 
             //test function for our button
             this.getRaces = function() {
@@ -191,6 +197,7 @@ angular.module('raceController', ['ui.bootstrap'])
             // I AM injecting $scope here, because I'm using it for a watch below.  Remove $scope if/when I get rid of the watch
             this.raceFormData = {};
             this.raceId = $stateParams.raceId;
+            console.log('$stateParams', $stateParams);
             this.validationErrors = [];
 
             //$scope.loadingData = false;
