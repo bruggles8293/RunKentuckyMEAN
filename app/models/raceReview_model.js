@@ -1,9 +1,6 @@
 /**
  * Created by brian on 12/28/2014.
  */
-/**
- * Created by brian on 12/28/2014.
- */
 var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
@@ -18,7 +15,7 @@ var RaceReviewSchema   = new Schema({
         //, createdByUserId: { type: String, required: true}        // need login system to implement this
         , race: {
             type: Schema.ObjectId
-            , ref: 'race'
+            , ref: 'Race'
         }
     }
     ,{ id: false}
