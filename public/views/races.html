@@ -35,7 +35,8 @@
                 <td>{{race.raceDirector.fullName}}</td>
                 <td>{{race.raceDistance.distanceName}}</td>
                 <!-- <td><button ng-show="!editingRaces[$index]" ng-click="editRace($index)" class="btn btn-primary btn-sm">edit</button></td> -->
-                <td><a href="races/{{race._id}}/update" class="btn btn-primary btn-sm">Edit</a></td>
+                <!-- <td><a href="races/{{race._id}}/update" class="btn btn-primary btn-sm">Edit</a></td> -->
+                <td><a href="javascript: void(0);" class="btn btn-primary btn-sm" ng-click="racesListCtrl.updateRace(race._id)">Edit</a></td>
             </tr>
             <!--<tr collapse="!race.isExpanded"> -->
             <!-- this is much faster than using collapse, and accomplishes the same thing -->
