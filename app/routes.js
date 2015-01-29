@@ -3,6 +3,7 @@ var Race = require('./models/race_model');
 var RaceDirector = require('./models/raceDirector_model');
 var RaceDistance = require('./models/raceDistance_model');
 var RaceOccurrence = require('./models/raceOccurrence_model');
+var RaceResult = require('./models/raceResult_model');
 
 function getBears(res){
 	Bear.find(function(err, bears) {
@@ -18,7 +19,8 @@ function getBears(res){
 
 function getRaceById(id, res){
 	Race.findById(id)		// note that findByID() (and find()) return Mongoose Query objects
-		.populate('raceDirector raceDistance')
+		.populate('raceDirector raceDistance sisterRaces raceOccurrences raceReviews')
+		// note that I can't populate raceOccurrences.raceResult here (maybe try mongoose-deep-populate?)
 		.exec(function(err, race) {
 			// if there is an error retrieving, send the error. nothing after res.send(err) will execute
 			if (err) {
