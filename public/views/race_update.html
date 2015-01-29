@@ -69,13 +69,13 @@
         </div>
     </div>
 </div>
-<div class="panel panel-danger" ng-show="raceUpdateCtrl.showValidationErrors">
+<div class="panel panel-danger" ng-show="raceUpdateCtrl.validationErrors.length > 0">
     <div class="panel-heading">
         <h3 class="panel-title">Validation Errors</h3>
     </div>
     <div class="panel-body">
         <ul>
-            <li ng-repeat="ve in validationErrors">{{ ve }}</li>
+            <li ng-repeat="ve in raceUpdateCtrl.validationErrors">{{ ve }}</li>
         </ul>
     </div>
 </div>
