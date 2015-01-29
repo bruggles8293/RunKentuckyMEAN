@@ -60,7 +60,6 @@ angular.module('raceController', ['ui.bootstrap'])
             // maybe do a 'var vm = this;', then use vm throughout?
             this.loadingRaces = true;
             //$scope.loadingRaceDirectors = true;       // might need this here
-
             // see this link to understand why we're creating a $scope reference to RaceService:
             // http://stsc3000.github.io/blog/2013/10/26/a-tale-of-frankenstein-and-binding-to-service-values-in-angular-dot-js/
             this.raceService = RaceService;
@@ -189,10 +188,10 @@ angular.module('raceController', ['ui.bootstrap'])
     // inject the Race service factory into our controller
     .controller('RaceUpdateCtrl', ['$scope', '$q', '$stateParams'
                     , 'RaceService', 'svc_RaceDirectors', 'svc_RaceDistances'
-                    , 'race', 'raceDirectors', 'raceDistances', 'testValue'
+                    , 'race', 'raceDirectors', 'raceDistances', 'testValue', 'toastr'
         , function($scope, $q, $stateParams
                     , RaceService, svc_RaceDirectors, svc_RaceDistances
-                    , race, raceDirectors, raceDistances, testValue) {
+                    , race, raceDirectors, raceDistances, testValue, toastr) {
 
             // I AM injecting $scope here, because I'm using it for a watch below.  Remove $scope if/when I get rid of the watch
             this.raceFormData = {};
@@ -201,7 +200,6 @@ angular.module('raceController', ['ui.bootstrap'])
             this.validationErrors = [];
 
             //$scope.loadingData = false;
-
             //console.log('testValue = ' + testValue);
             console.log('race', race);
             //console.log('raceDirectors', raceDirectors);
@@ -216,6 +214,8 @@ angular.module('raceController', ['ui.bootstrap'])
             this.race = race;
             this.raceDirectors = raceDirectors.data;
             this.raceDistances = raceDistances.data;
+
+            toastr.info("here is some info");
 
             // example of a single $watch
             /*
@@ -258,7 +258,7 @@ angular.module('raceController', ['ui.bootstrap'])
                                 ctrl.validationErrors.push("Remember to add your non-standard distance");
                         }
                     }
-                    ctrl.showValidationErrors = ctrl.validationErrors.length;
+                    //ctrl.showValidationErrors = ctrl.validationErrors.length;
                     console.log('ctrl.validationErrors', ctrl.validationErrors)
             });
             // THEREFORE, WE'RE NOT CALLING INIT() ANYMORE
