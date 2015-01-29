@@ -6,7 +6,10 @@ var Schema       = mongoose.Schema;
 
 var RaceOccurrenceSchema = new Schema({
     date: { type: Date, required: true }
-    , raceResult: Schema.RaceResult       // nested schema here since we don't need many-to-many
+    , raceResult: {
+        type: Schema.ObjectId
+        , ref: 'RaceResult'
+    }
     , adminApproved: {type: Boolean}
 })
 
